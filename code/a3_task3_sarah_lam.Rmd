@@ -1,0 +1,14 @@
+---
+title: "Assignment 3 Task 3"
+author: "Sarah Lam"
+date: "10/23/2021"
+output: html_document
+---
+
+```{r setup, include=TRUE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE, messages = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(here)
+```
+
