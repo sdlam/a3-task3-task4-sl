@@ -10,5 +10,76 @@ knitr::opts_chunk$set(echo = TRUE, messages = FALSE, warning = FALSE)
 
 library(tidyverse)
 library(here)
+library(janitor)
+library(kableExtra)
 ```
+
+# Read in the Data
+
+```{r}
+urchins <- read_csv(here("data", "urchins.csv")) %>% 
+  clean_names()
+```
+
+## Section 1: Size Comparison of Red and Purple Urchins
+
+# Data Visualization
+
+This code compares the diameters(cm) of purple and red urchins in a faceted histogram using ggplot::geom_histogram() and facet_wrap() to divide the plot by urchin common name. 
+
+REDUCE NUMBER OF BINS STILL 
+
+```{r}
+ggplot(data = urchins, aes(x = size)) +
+  geom_histogram() +
+  facet_wrap(~common_name) +
+  labs(x = "Urchin Diameter (cm)",
+       y = "Count of Urchins",
+       title = "Red and Purple Urchin Size Distribution")
+```
+
+# Descriptive Statistics Table
+
+This code first summarizes these variable and then creates a table of the summary statistics. creates a summary table that contains the following statistics for purple and red urchins (still ignoring site as a variable, but including species as a grouping variable): mean, median, standard deviation, and sample size. Use kableExtra (or another package for tables in R) to finalize your table for your knitted document. Add a table caption above your table. Some things to consider:
+Are the values a reasonable number of significant figures?
+Have you updated column names to be finalized (with units?)
+
+```{r}
+urchins_size_summary <- urchins %>% 
+  group_by(common_name) %>% 
+  summarize(mean = mean(size, na.rm = TRUE),
+            median = median(size, na.rm = TRUE),
+            standard_deviation = sd(size, na.rm = TRUE),
+            sample_size = n())
+
+urchins_size_summary %>% 
+  kable(col.names = c("Species",
+                      "Mean Size (cm)",
+                      "Median Size (cm)",
+                      "Standard Deviation",
+                      "Sample Size (n)")) %>% 
+  kable_styling(full_width = FALSE)
+```
+
+
+Below where your graph and table appear, add 2 - 3 sentences briefly describing your overall takeaways about how the size (distribution, central tendency, spread, etc.) compare between the two species of urchins (again, here we are ignoring site and treatment as a variable). Help to contextualize any differences you observe - for example, what is the actual and % difference in mean urchin diameter between the species? 
+
+## Section 2. Purple Urchin Counts By Site and Year
+
+In a piped sequence (remember to check the output after every step), create stored subset of the urchins data called purple_urchins in which you: 
+Filter to only include observations for purple urchins
+Convert the date to class “Date” 
+Create a new column that only contains the year
+Create a new column called site_full that contains the full name (not abbreviation) for each of the five sites: NAPL = Naples Reef, AQUE = Arroyo Quemado Reef, CARP = Carpinteria Reef, MOHK = Mohawk Reef, IVEE = Isla Vista Reef. 
+Write code to store a table containing the total number of purple urchins observed by site and year. You do not need to finalize this table and it does not need to appear in your knitted document (you’ll just use the output in a plot in the next step).
+Make a finalized graph of counts of purple urchins recorded at each site over time for the years included in the study. Add a figure caption.
+Add text below your graph: do you think this graph reflects changes in the purple urchin population? What would you have to take into account to determine whether the changes in counts by year are reflective of actual changes in urchin population? What else could explain the changes in number of purple urchins observed? 
+Save & knit your .Rmd for this task, then commit & push to GitHub for safekeeping. You will upload your .Rmd and HTML for Task 3 to GauchoSpace. 
+
+
+
+
+
+
+
 
