@@ -12,6 +12,7 @@ library(tidyverse)
 library(here)
 library(janitor)
 library(kableExtra)
+library(lubridate)
 ```
 
 # Read in the Data
@@ -65,6 +66,26 @@ urchins_size_summary %>%
 Below where your graph and table appear, add 2 - 3 sentences briefly describing your overall takeaways about how the size (distribution, central tendency, spread, etc.) compare between the two species of urchins (again, here we are ignoring site and treatment as a variable). Help to contextualize any differences you observe - for example, what is the actual and % difference in mean urchin diameter between the species? 
 
 ## Section 2. Purple Urchin Counts By Site and Year
+
+```{r}
+purple_urchins <- urchins %>% 
+  filter(common_name = "Purple Urchin") %>% 
+  ymd(date) %>% 
+  mutate(year = year(date)) mmmmm %>% 
+  mutate(site_ful = case_when(
+    site == "NAPL" ~ "Naples Reef",
+    site == "AQUE" ~ "Arroyo Quemado Reef",
+    site == "CARP" ~ "Carpinteria Reef",
+    site == "MOHK" ~ "Mohawk Reef",
+    site == "IVEE" ~ "Isla Vista Reef"
+  ))
+
+site_by_year <- purple_urchins %>% 
+  group_by(year) %>% 
+  count(site)
+
+ggplot(data = site_by_year) 
+```
 
 In a piped sequence (remember to check the output after every step), create stored subset of the urchins data called purple_urchins in which you: 
 Filter to only include observations for purple urchins
