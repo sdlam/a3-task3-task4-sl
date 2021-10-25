@@ -32,7 +32,7 @@ REDUCE NUMBER OF BINS STILL
 
 ```{r}
 ggplot(data = urchins, aes(x = size)) +
-  geom_histogram() +
+  geom_histogram(bins = 12) +
   facet_wrap(~common_name) +
   labs(x = "Urchin Diameter (cm)",
        y = "Count of Urchins",
@@ -69,10 +69,10 @@ Below where your graph and table appear, add 2 - 3 sentences briefly describing 
 
 ```{r}
 purple_urchins <- urchins %>% 
-  filter(common_name = "Purple Urchin") %>% 
-  ymd(date) %>% 
-  mutate(year = year(date)) mmmmm %>% 
-  mutate(site_ful = case_when(
+  filter(common_name == "Purple Urchin") %>% 
+  mutate(date_class = mdy(date)) %>% 
+  mutate(year = year(date_class)) %>% 
+  mutate(site_full = case_when(
     site == "NAPL" ~ "Naples Reef",
     site == "AQUE" ~ "Arroyo Quemado Reef",
     site == "CARP" ~ "Carpinteria Reef",
@@ -81,19 +81,16 @@ purple_urchins <- urchins %>%
   ))
 
 site_by_year <- purple_urchins %>% 
-  group_by(year) %>% 
-  count(site)
+  group_by(site_full, year) %>% 
+  summarize(count = n())
 
-ggplot(data = site_by_year) 
+ggplot(data = site_by_year, aes(x = year, y = count)) +
+  geom_col() + 
+  facet_wrap(~site_full)
+
+
 ```
 
-In a piped sequence (remember to check the output after every step), create stored subset of the urchins data called purple_urchins in which you: 
-Filter to only include observations for purple urchins
-Convert the date to class “Date” 
-Create a new column that only contains the year
-Create a new column called site_full that contains the full name (not abbreviation) for each of the five sites: NAPL = Naples Reef, AQUE = Arroyo Quemado Reef, CARP = Carpinteria Reef, MOHK = Mohawk Reef, IVEE = Isla Vista Reef. 
-Write code to store a table containing the total number of purple urchins observed by site and year. You do not need to finalize this table and it does not need to appear in your knitted document (you’ll just use the output in a plot in the next step).
-Make a finalized graph of counts of purple urchins recorded at each site over time for the years included in the study. Add a figure caption.
 Add text below your graph: do you think this graph reflects changes in the purple urchin population? What would you have to take into account to determine whether the changes in counts by year are reflective of actual changes in urchin population? What else could explain the changes in number of purple urchins observed? 
 Save & knit your .Rmd for this task, then commit & push to GitHub for safekeeping. You will upload your .Rmd and HTML for Task 3 to GauchoSpace. 
 
