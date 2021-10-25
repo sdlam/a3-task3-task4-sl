@@ -1,0 +1,47 @@
+---
+title: "Assignment 3 Task 4"
+author: "Sarah Lam"
+date: "10/24/2021"
+output: html_document
+---
+
+```{r setup, include=TRUE, warning= FALSE, message= FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(lubridate)
+```
+
+# Read in the Data 
+
+```{r}
+urchins <- read_csv(here("data", "urchins.csv")) %>% 
+  clean_names()
+```
+
+# Data Visualization 
+
+Within that .Rmd, read in the urchins data and write code to compare the mean size of purple urchins in CONTROL (no giant kelp removal) or ANNUAL (annual kelp removal) sections of Naples Reef in 2010. You should write nicely annotated code, with clear sections and text as useful, to: 
+```{r}
+p_naples_mean <- purple_urchins %>% #!!!!! ASK about this in office hours, using purple_urchins from task 3 since it already has the date column in it....
+  filter(site == "NAPL", year == 2010) %>% 
+  group_by(treatment) %>% 
+  summarize(mean = mean(size, na.rm = FALSE))
+
+ggplot(data = p_naples_size, aes(x = treatment, y = mean)) +
+  geom_col(width = 0.25)
+```
+
+Wrangle the urchins data to only include Naples Reef observations for purple urchins observed in 2010. Hint: convert date to "Date" class with lubridate, then use the `year()` functions to add a new columns for year that you can use as variable for filtering. 
+
+```{r}
+purple_naples_2021 <- 
+ggplot(data = purple_urchins, aes(x = size)) +
+  geom_histogram() +
+  facet_wrap(~
+```
+
+Look at and consider exploratory faceted histograms and QQ-plots for the size distribution of purple urchins at Naples in 2010, separated by treatment (Control and Annual), to assess normality. These are exploratory and do not need to be finalized and you do not need to add figure captions, but these should appear in your knitted document. Below the graphs add 1 - 2 sentences describing your main takeaways about the distribution of purple urchin sizes for each treatment (distribution, comparison, patterns, etc.). 
+Create a finalized basic summary table (with table caption above) of descriptive statistics for both groups (including at least the mean, standard deviation, and sample size by treatment). 
