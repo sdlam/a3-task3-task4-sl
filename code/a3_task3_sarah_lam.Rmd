@@ -30,10 +30,14 @@ This code compares the diameters(cm) of purple and red urchins in a faceted hist
 
 REDUCE NUMBER OF BINS STILL 
 
-```{r}
+```{r fig.cap = "This histogram shows the size distributions of purple and red urchins (diameter, cm). The purple urchins, shown in purple, have a normal looking distribution with a majority at  about 4.5cm. The red urchins, shown in red, also have a normal looking distribution but a shorter, wider curve, the mean apprea "}
 ggplot(data = urchins, aes(x = size)) +
-  geom_histogram(bins = 12) +
+  geom_histogram(bins = 12, 
+                 aes(fill = common_name), 
+                 show.legend = FALSE) +
   facet_wrap(~common_name) +
+  scale_fill_manual(values = c("Purple Urchin" = "purple", 
+                               "Red Urchin" = "red")) +
   labs(x = "Urchin Diameter (cm)",
        y = "Count of Urchins",
        title = "Red and Purple Urchin Size Distribution")
@@ -85,7 +89,8 @@ site_by_year <- purple_urchins %>%
   summarize(count = n())
 
 ggplot(data = site_by_year, aes(x = year, y = count)) +
-  geom_col() + 
+  geom_col(aes(fill = site_full), 
+           show.legend = FALSE) + 
   facet_wrap(~site_full)
 
 
