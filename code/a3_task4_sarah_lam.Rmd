@@ -12,42 +12,76 @@ library(tidyverse)
 library(here)
 library(janitor)
 library(lubridate)
+library(kableExtra)
 ```
+# Overview 
+
+This code wrangles and visualizes a faceted histogram and QQ-plot to explore the normality of the size distribution of purple urchins at Naples in 2010 by treatment (Control and Annual). 
 
 # Read in the Data 
 
 ```{r}
-urchins <- read_csv(here("data", "urchins.csv")) %>% 
+urchins <- read_csv(here("data", "urchins.csv")) %>% # read in data and clean names in same line
   clean_names()
 
-purp_naples_2010 <- urchins %>% 
-  mutate(date_class = mdy(date)) %>% 
+purp_naples_2010 <- urchins %>% #create subset containing only purple urchins, from Naples Reef, from 2010
+  mutate(date_class = mdy(date)) %>% #change date format & class so that it is a filterable variable 
   mutate(year = year(date_class)) %>% 
   filter(common_name == "Purple Urchin",
          site == "NAPL", 
          year == 2010)
+```
+# Summary Table
 
-p_naples_mean <- purp_naples_2010 %>% 
+This code creates a finalized basic summary table of mean, standard deviation, and sample size by treatment for both purple and red urchins.
+
+```{r}
+urchin_summary <- purp_naples_2010 %>% 
   group_by(treatment) %>% 
-  summarize(mean = mean(size, na.rm = FALSE))
+  summarize(mean = round(mean(size, na.rm = TRUE), 1),
+            median = median(size, na.rm = TRUE),
+            standard_deviation = round(sd(size, na.rm = TRUE), 2),
+            sample_size = n())
 
-p_naples_mean
+urchin_summary %>% 
+  kable(col.names = c("Treatment",
+                      "Mean Diameter (cm)",
+                      "Median Diameter (cm)",
+                      "Standard Deviation",
+                      "Sample Size (n)"), 
+        caption = "This tables shows a summary of the mean urchin diameter in centimeters, median urchin diameter in centimeters, the sandard deviation, and the sample size for pruple urchins in Naples Reef in 2010 based on the annual and control experiemtnla kelp treatment groups. For the control group, the giant kelp is left intact and for the annual group the kelp is removed each winter.") %>% 
+  kable_styling(full_width = FALSE)
 ```
 
 # Data Visualization 
 
-Read in the urchins data and write code to compare the mean size of purple urchins in CONTROL (no giant kelp removal) or ANNUAL (annual kelp removal) sections of Naples Reef in 2010. You should write nicely annotated code, with clear sections and text as useful, to: 
+This code visually compares the mean size of purple urchins in CONTROL (no giant kelp removal) or ANNUAL (annual kelp removal) sections of Naples Reef in 2010. These visualizations are exploratory and unfinalized.
+
 ```{r}
 ggplot(data = purp_naples_2010, aes(x = size)) +
   geom_histogram() +
-  facet_wrap(~ treatment)
+  facet_wrap(~ treatment) +
+  labs(x = "Urchin Diamter (cm)",
+       y = "Urchin Count (# of urchins)",
+       title = "Size Distribution of Purple Urchins in Naples Reef in 2010 (Lam)")
 ```
 
 ```{r}
 ggplot(data = purp_naples_2010, aes(sample = size)) +
   geom_qq() +
-  facet_wrap(~ treatment)
+  facet_wrap(~ treatment) +
+  labs(x = "", 
+       y = "", 
+       title = "QQ Plot of Urchin Size Distribution by Treatment Groups (Lam)")
 ```
 
-Look at and consider exploratory faceted histograms and QQ-plots for the size distribution of purple urchins at Naples in 2010, separated by treatment (Control and Annual), to assess normality. These are exploratory and do not need to be finalized and you do not need to add figure captions, but these should appear in your knitted document. Below the graphs add 1 - 2 sentences describing your main takeaways about the distribution of purple urchin sizes for each treatment (distribution, comparison, patterns, etc.). 
-Create a finalized basic summary table (with table caption above) of descriptive statistics for both groups (including at least the mean, standard deviation, and sample size by treatment). 
+The distribution of purple urchin sizes for each treatment in Naples Reef from 2010 appears fairly normal. Both treatments appear to have a slight positive skew, but the annual treatment's skew seems slightly more dramatic than that of the control treatment. However, when coupled with the relatively linear QQ plot, it seems plausible that out sample came from a population with normal distribution and therefore we can treat this data as normal for further statistical analysis.
+
+
+
+
+
+
+
+
+
