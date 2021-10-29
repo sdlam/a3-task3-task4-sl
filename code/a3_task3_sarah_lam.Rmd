@@ -27,9 +27,9 @@ urchins <- read_csv(here("data", "urchins.csv")) %>% # read in data and clean na
   clean_names()
 ```
 
-## Section 1: Size Comparison of Red and Purple Urchins
+# Section 1: Size Comparison of Red and Purple Urchins
 
-# Data Visualization
+## Data Visualization
 
 This code compares the diameters(cm) of purple and red urchins in a faceted histogram using ggplot::geom_histogram() and facet_wrap() to divide the plot by urchin common name. 
 
@@ -45,11 +45,11 @@ ggplot(data = urchins, aes(x = size)) +
                                "Red Urchin" = "red")) +
   theme_light() +
   labs(x = "Urchin Diameter (cm)",
-       y = "Count of Urchins",
+       y = "Count of Urchins (# urchins observed)",
        title = "Red and Purple Urchin Size Distribution")
 ```
 
-# Descriptive Statistics Table
+## Descriptive Statistics Table
 
 This code first summarizes and then creates a table of the summary statistics mean, median, standard deviation, and sample size for purple and red urchins, using kableExtra::kable() to finalize the table in the knitted document. 
 
@@ -71,18 +71,18 @@ urchins_size_summary %>%
   kable_styling(full_width = FALSE)
 ```
 
-Below where your graph and table appear, add 2 - 3 sentences briefly describing your overall takeaways about how the size (distribution, central tendency, spread, etc.) compare between the two species of urchins (again, here we are ignoring site and treatment as a variable). Help to contextualize any differences you observe - for example, what is the actual and % difference in mean urchin diameter between the species? 
+Based on the above data, it seems that the red urchins are, on average, a little larger than the purple urchins. The red urchin mean diameter is 6.8 cm as opposed to the purple urchin's 4.5 cm mean diameter. The red urchins also seem to have a greater variability in size among the observed individuals, this can be seem in both the histogram which is shorter and wider for the red urchins, and the standard deviation, which is higher for red urchins. These differences are interesting, but actually seem fairly small, the difference in mean size is `r urchins_size_summary$mean[2] - urchins_size_summary$mean[1]` cm which is on a `r round(urchins_size_summary$mean[1] / urchins_size_summary$mean[2], 2)`% difference. 
 
+# Section 2. Purple Urchin Counts By Site and Year
 
+This code first create a subset of data called "purple_urchins" that only keeps purple urchin and changes the date column format and class to make the year a more usable variable. It then groups by site and year in order to visualize the data as the observes urchins at each site each year.
 
-## Section 2. Purple Urchin Counts By Site and Year
-
-```{r fig.cap = "This figure shows the sie of the populution of purple urchins from 2008 to 2020 at five sites along the Santa Barbara coast. All of the sites appear to show varying degrees of a downward trend in population size. While the sites show a higher variety of population sizes around 2008 to 2012, the site populations appear more similar from 2012 to 2020."}
+```{r fig.cap = "This figure shows the number of purple urchins observed from 2008 to 2020 at five sites along the Santa Barbara coast. All of the sites appear to show varying degrees of a downward trend in count size. While the sites show a higher variety of number of urchins around 2008 to 2012, the site counts appear more similar from 2012 to 2020."}
 purple_urchins <- urchins %>% 
   filter(common_name == "Purple Urchin") %>% 
   mutate(date_class = mdy(date)) %>% 
   mutate(year = year(date_class)) %>% 
-  mutate(site_full = case_when(
+  mutate(site_full = case_when(     # case_when() form of if/else statement telling it if x==y, then (~) xyz
     site == "NAPL" ~ "Naples Reef",
     site == "AQUE" ~ "Arroyo Quemado Reef",
     site == "CARP" ~ "Carpinteria Reef",
@@ -104,8 +104,9 @@ ggplot(data = site_by_year, aes(x = year, y = count)) +
        title = "Purple Urchin Size Distributions by Site Along Santa Barbara Coast (Lam)")
 ```
 
-I think that this graph may not accurately reflect the changes in the purple urchin population. What would you have to take into account to determine whether the changes in counts by year are reflective of actual changes in urchin population? What else could explain the changes in number of purple urchins observed? 
-Save & knit your .Rmd for this task, then commit & push to GitHub for safekeeping. You will upload your .Rmd and HTML for Task 3 to GauchoSpace. 
+### Analysis
+
+I think that this graph may not accurately reflect the changes in the purple urchin population. First of all, we ignored the treatment variable for this graph which could be skewing the overall populations lower as we see here, but the control group might not have such a drastic population decrease. Additionally, data collection methods could explain some of the changes that we see in number of purple urchins observed. For example, four of the sites start with very low populations in 2008 and then drastically jump to a higher number the next year, it seems unlikely that there would be that quick of a spike in urchin populations and more likely that the data collection effort changed in such a way that data collection became better in the second year. Similarly, the Isla Vista Reef has no urchin observed until 2012, again it seems more like that the site was simply added to the data collection effort later than the other rather than the urchins suddenly appearing there. Finally, the sudden drop off in urchin population across sites in 2020 could be linked to the COVID-19 pandemic and decreased data collection efforts or ability due to new rules and regulations. In order to determine whether the changes in counts by year are reflective of actual changes in urchin population we would need to take these factors into account and determine the significance of their impact. 
 
 
 
