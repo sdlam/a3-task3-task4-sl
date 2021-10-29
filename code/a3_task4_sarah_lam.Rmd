@@ -49,7 +49,7 @@ urchin_summary %>%
                       "Median Diameter (cm)",
                       "Standard Deviation",
                       "Sample Size (n)"), 
-        caption = "This tables shows a summary of the mean urchin diameter in centimeters, median urchin diameter in centimeters, the sandard deviation, and the sample size for pruple urchins in Naples Reef in 2010 based on the annual and control experiemtnla kelp treatment groups. For the control group, the giant kelp is left intact and for the annual group the kelp is removed each winter.") %>% 
+        caption = "This table shows a summary of the mean urchin diameter in centimeters, median urchin diameter in centimeters, the sandard deviation, and the sample size for pruple urchins in Naples Reef in 2010 based on the annual and control experiemtnla kelp treatment groups. For the control group, the giant kelp is left intact and for the annual group the kelp is removed each winter.") %>% 
   kable_styling(full_width = FALSE)
 ```
 

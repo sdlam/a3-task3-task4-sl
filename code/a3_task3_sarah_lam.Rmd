@@ -15,10 +15,15 @@ library(kableExtra)
 library(lubridate)
 ```
 
-# Read in the Data
+# Overview 
 
+This code practices version control, data wrangling, and analysis & visualization skills to explore data about red and purple urchins from the Santa Barbara area collected by the Santa Barbara Coastal Long Term Ecological Research program divers.
+
+Data: Reed, D. 2020. SBC LTER: Reef: Long-term experiment: Kelp removal: Urchin size frequency distribution ver 20. Environmental Data Initiative. https://doi.org/10.6073/pasta/5a1e9ef03aa47bd2225c0bb98a02a63b. 
+
+# Read in the Data
 ```{r}
-urchins <- read_csv(here("data", "urchins.csv")) %>% 
+urchins <- read_csv(here("data", "urchins.csv")) %>% # read in data and clean names in same line
   clean_names()
 ```
 
@@ -30,7 +35,7 @@ This code compares the diameters(cm) of purple and red urchins in a faceted hist
 
 REDUCE NUMBER OF BINS STILL 
 
-```{r fig.cap = "This histogram shows the size distributions of purple and red urchins (diameter, cm). The purple urchins, shown in purple, have a normal looking distribution with a majority at  about 4.5cm. The red urchins, shown in red, also have a normal looking distribution but a shorter, wider curve, the mean apprea "}
+```{r fig.cap = "This histogram shows the size distributions of purple and red urchins (diameter, cm). The purple urchins, shown in purple, have a normal looking distribution with a mean around 4.5cm. The red urchins, shown in red, also have a normal looking distribution but a shorter, wider curve, the mean apprear to be around 7cm."}
 ggplot(data = urchins, aes(x = size)) +
   geom_histogram(bins = 12, 
                  aes(fill = common_name), 
@@ -38,6 +43,7 @@ ggplot(data = urchins, aes(x = size)) +
   facet_wrap(~common_name) +
   scale_fill_manual(values = c("Purple Urchin" = "purple", 
                                "Red Urchin" = "red")) +
+  theme_light() +
   labs(x = "Urchin Diameter (cm)",
        y = "Count of Urchins",
        title = "Red and Purple Urchin Size Distribution")
@@ -45,33 +51,33 @@ ggplot(data = urchins, aes(x = size)) +
 
 # Descriptive Statistics Table
 
-This code first summarizes these variable and then creates a table of the summary statistics. creates a summary table that contains the following statistics for purple and red urchins (still ignoring site as a variable, but including species as a grouping variable): mean, median, standard deviation, and sample size. Use kableExtra (or another package for tables in R) to finalize your table for your knitted document. Add a table caption above your table. Some things to consider:
-Are the values a reasonable number of significant figures?
-Have you updated column names to be finalized (with units?)
+This code first summarizes and then creates a table of the summary statistics mean, median, standard deviation, and sample size for purple and red urchins, using kableExtra::kable() to finalize the table in the knitted document. 
 
 ```{r}
 urchins_size_summary <- urchins %>% 
   group_by(common_name) %>% 
-  summarize(mean = mean(size, na.rm = TRUE),
+  summarize(mean = round(mean(size, na.rm = TRUE), 1),
             median = median(size, na.rm = TRUE),
-            standard_deviation = sd(size, na.rm = TRUE),
+            standard_deviation = round(sd(size, na.rm = TRUE), 1),
             sample_size = n())
 
 urchins_size_summary %>% 
   kable(col.names = c("Species",
-                      "Mean Size (cm)",
-                      "Median Size (cm)",
+                      "Mean Diameter (cm)",
+                      "Median Diameter (cm)",
                       "Standard Deviation",
-                      "Sample Size (n)")) %>% 
+                      "Sample Size (n)"),
+        caption = "This table shows a summary of the mean urchin diameter (cm), median urchin diameter (cm), the sandard deviation, and the sample size for pruple and red urchins.") %>% 
   kable_styling(full_width = FALSE)
 ```
 
-
 Below where your graph and table appear, add 2 - 3 sentences briefly describing your overall takeaways about how the size (distribution, central tendency, spread, etc.) compare between the two species of urchins (again, here we are ignoring site and treatment as a variable). Help to contextualize any differences you observe - for example, what is the actual and % difference in mean urchin diameter between the species? 
+
+
 
 ## Section 2. Purple Urchin Counts By Site and Year
 
-```{r}
+```{r fig.cap = "This figure shows the sie of the populution of purple urchins from 2008 to 2020 at five sites along the Santa Barbara coast. All of the sites appear to show varying degrees of a downward trend in population size. While the sites show a higher variety of population sizes around 2008 to 2012, the site populations appear more similar from 2012 to 2020."}
 purple_urchins <- urchins %>% 
   filter(common_name == "Purple Urchin") %>% 
   mutate(date_class = mdy(date)) %>% 
@@ -91,12 +97,14 @@ site_by_year <- purple_urchins %>%
 ggplot(data = site_by_year, aes(x = year, y = count)) +
   geom_col(aes(fill = site_full), 
            show.legend = FALSE) + 
-  facet_wrap(~site_full)
-
-
+  facet_wrap(~site_full) +
+  theme_minimal() +
+  labs(x = "Year",
+       y = "Count of Urchins (# of urchins)",
+       title = "Purple Urchin Size Distributions by Site Along Santa Barbara Coast (Lam)")
 ```
 
-Add text below your graph: do you think this graph reflects changes in the purple urchin population? What would you have to take into account to determine whether the changes in counts by year are reflective of actual changes in urchin population? What else could explain the changes in number of purple urchins observed? 
+I think that this graph may not accurately reflect the changes in the purple urchin population. What would you have to take into account to determine whether the changes in counts by year are reflective of actual changes in urchin population? What else could explain the changes in number of purple urchins observed? 
 Save & knit your .Rmd for this task, then commit & push to GitHub for safekeeping. You will upload your .Rmd and HTML for Task 3 to GauchoSpace. 
 
 
